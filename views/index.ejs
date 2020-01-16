@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <title>Facial Recognition Exercises</title>
+    </head>
+
+    <body>
+        <h1>Mission Ready HQ</h1>
+        <h2>Week 1 Mission</h2>
+        <h2>Facial Recognition App</h2>
+
+        <form id="submit_form" enctype="multipart/form-data" method="post">
+            <div>
+                <p>
+                    <p>Upload your image here</p>
+                    <input type="file" id="picture_input" name="picture_input" accept="image/*">
+                </p>
+                <button type="button" onclick="face_recognition()">Face Recognition</button>
+            </div>
+    
+            <br>
+    
+            <div>
+                <img id="display_img" style="width: 50%; height: 50%; position: relative;" alt="picture">
+                <h2>Results</h2>
+                <code id="face_properties">
+
+                </code>
+            </div>
+        </form>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+
+            var file = null; 
+
+            $(document).ready
+            (
+                function()
+                {
+
+                    $('#picture_input').change
+                    (
+                        function(event)
+                        {
+
+                            file = event.target.files[0]; 
+                            var src = URL.createObjectURL(file); 
+                            $("#display_img").attr("src",src); 
+                        }
+                    );
+                }
+            );
+
+            async function face_recognition()
+            {
+                if(!file)
+                {
+                    alert("There is a problem with our server, please try again"); 
+                    return; 
+                }
+
+                var form_data = new FormData(); 
+                form_data.append("file",file); 
+
+                var url = "/upload_pictures"; 
+                var result = await ajax_post(url,form_data); 
+                try 
+                {
+                    $("#face_properties").html(result); 
+                }
+                catch
+                {
+                    alert("There is a problem with our server, please try again"); 
+                    return; 
+                }
+
+            }
+
+            async function ajax_post(url, data)
+            {
+                var result = null; 
+                $.ajax
+                (
+                    {
+                        url: url,
+                        data: data,
+                        type: "post",
+                        async: false, 
+                        contentType: false,
+                        processData: false,
+                        enctype: 'multipart/form-data',
+                        success: function(success)
+                        {
+                            result = success; 
+                        }, 
+                        error: function(error)
+                        {
+                            result = error; 
+                        }
+
+
+                    }
+                );
+                return result; 
+            }
+        </script>
+    </body>
+</html>
